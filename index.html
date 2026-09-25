@@ -1,13 +1,666 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>talat-apology</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talat, I'm Sorry</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #0a0e17 0%, #1a1f2e 50%, #0d1117 100%);
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .app {
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Stars Background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .stars::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #ffffff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 4s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        .night-sky::before {
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 50px 160px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 130px 80px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 160px 120px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 200px 50px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 250px 150px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 300px 100px, #ffffff, rgba(0,0,0,0));
+            background-size: 350px 200px;
+            animation: twinkle 6s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Music Toggle */
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #f0f0f0;
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .music-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Sections */
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Landing Section */
+        .landing {
+            text-align: center;
+        }
+
+        .landing-content {
+            max-width: 800px;
+            animation: fadeIn 2s ease;
+        }
+
+        .landing h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 300;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            color: #f0f0f0;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .landing p {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            line-height: 1.8;
+            color: #b0b0b0;
+            margin-bottom: 40px;
+        }
+
+        .read-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #f0f0f0;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+            letter-spacing: 1px;
+        }
+
+        .read-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 1.5s ease forwards;
+        }
+
+        .fade-in-delay {
+            animation: fadeIn 1.5s ease 0.5s forwards;
+            opacity: 0;
+        }
+
+        .fade-in-delay-2 {
+            animation: fadeIn 1.5s ease 1s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Hurt Section */
+        .hurt-section {
+            background: linear-gradient(180deg, transparent 0%, rgba(139, 0, 0, 0.05) 50%, transparent 100%);
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 300;
+            margin-bottom: 50px;
+            text-align: center;
+            letter-spacing: 2px;
+            color: #f0f0f0;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        .hurt-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #d0d0d0;
+            backdrop-filter: blur(10px);
+            animation: cardFadeIn 0.8s ease forwards;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .hurt-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes cardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .final-hurt-text {
+            font-size: 1.2rem;
+            color: #ff9999;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            font-style: italic;
+            line-height: 1.8;
+        }
+
+        /* Continue Button */
+        .continue-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #f0f0f0;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+            margin-top: 20px;
+        }
+
+        .continue-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Forgive Section */
+        .forgive-section {
+            background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.02) 50%, transparent 100%);
+        }
+
+        .forgive-content {
+            max-width: 700px;
+            text-align: center;
+        }
+
+        .forgive-text p {
+            font-size: 1.2rem;
+            line-height: 2;
+            margin-bottom: 15px;
+            color: #d0d0d0;
+        }
+
+        .forgive-text .emphasis {
+            color: #f0f0f0;
+            font-weight: 400;
+            font-size: 1.3rem;
+        }
+
+        .forgive-text .gap {
+            margin-top: 30px;
+        }
+
+        .forgive-text .sorry-large {
+            font-size: 2rem;
+            color: #ff9999;
+            margin-top: 40px;
+            font-style: italic;
+        }
+
+        /* Prayer Section */
+        .prayer-section {
+            background: linear-gradient(180deg, transparent 0%, rgba(25, 25, 112, 0.1) 50%, transparent 100%);
+        }
+
+        .prayer-content {
+            max-width: 700px;
+            text-align: center;
+        }
+
+        .prayer-text p {
+            font-size: 1.15rem;
+            line-height: 2;
+            margin-bottom: 15px;
+            color: #d0d0d0;
+        }
+
+        .prayer-text .gap {
+            margin-top: 25px;
+        }
+
+        .prayer-text .final-prayer {
+            font-size: 1.3rem;
+            color: #f0f0f0;
+            margin-top: 40px;
+            font-style: italic;
+        }
+
+        /* Letter Section */
+        .letter-section {
+            background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.02) 50%, transparent 100%);
+        }
+
+        .letter-content {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .letter {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 50px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .letter p {
+            font-size: 1.15rem;
+            line-height: 2;
+            margin-bottom: 15px;
+            color: #d0d0d0;
+        }
+
+        .letter .salutation {
+            font-size: 1.5rem;
+            color: #f0f0f0;
+            margin-bottom: 25px;
+        }
+
+        .letter .gap {
+            margin-top: 25px;
+        }
+
+        .letter .signature {
+            font-size: 1.3rem;
+            color: #ff9999;
+            margin-top: 30px;
+            font-style: italic;
+            text-align: right;
+        }
+
+        /* Choice Section */
+        .choice-section {
+            min-height: 50vh;
+            padding: 40px 20px;
+        }
+
+        .choice-content {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .choice-question {
+            font-size: 1.5rem;
+            color: #f0f0f0;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .choice-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #f0f0f0;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+            min-width: 200px;
+        }
+
+        .choice-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .choice-response {
+            font-size: 1.3rem;
+            color: #f0f0f0;
+            font-style: italic;
+            animation: fadeIn 1s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .section {
+                padding: 40px 15px;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .letter {
+                padding: 30px;
+            }
+
+            .hurt-card {
+                padding: 20px;
+            }
+
+            .section-title {
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .landing h1 {
+                font-size: 2rem;
+            }
+
+            .landing p {
+                font-size: 1rem;
+            }
+
+            .read-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+
+            .letter {
+                padding: 25px;
+            }
+
+            .letter p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Music Toggle -->
+        <button class="music-toggle" id="musicToggle">🔇</button>
+        
+        <!-- Background Audio -->
+        <audio id="audio" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
+        <!-- Section 1: Landing -->
+        <section class="section landing visible" id="section0">
+            <div class="stars"></div>
+            <div class="landing-content">
+                <h1 class="fade-in">Talat, I'm Sorry.</h1>
+                <p class="fade-in-delay">I don't know if these words can fix anything.<br />But I needed to say them.</p>
+                <button class="read-btn fade-in-delay-2" onclick="showSection(1)">
+                    Read my apology
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 2: For Every Time I Hurt You -->
+        <section class="section hurt-section" id="section1">
+            <div class="stars"></div>
+            <h2 class="section-title">For Every Time I Hurt You</h2>
+            <div class="cards-container">
+                <div class="hurt-card" style="animation-delay: 0s;">For the times I didn't understand you.</div>
+                <div class="hurt-card" style="animation-delay: 0.3s;">For the times my words hurt more than I realized.</div>
+                <div class="hurt-card" style="animation-delay: 0.6s;">For the times I made you feel alone.</div>
+                <div class="hurt-card" style="animation-delay: 0.9s;">For every argument where I should have listened instead of reacting.</div>
+                <div class="hurt-card" style="animation-delay: 1.2s;">For every promise I couldn't live up to.</div>
+                <div class="hurt-card" style="animation-delay: 1.5s;">For every moment I made your heart heavier.</div>
+                <div class="hurt-card" style="animation-delay: 1.8s;">For everything I remember.</div>
+                <div class="hurt-card" style="animation-delay: 2.1s;">And even for everything I don't.</div>
+            </div>
+            <p class="final-hurt-text">
+                I am not counting my mistakes because there is no number big enough to make them okay.
+            </p>
+            <button class="continue-btn" onclick="showSection(2)">
+                Continue
+            </button>
+        </section>
+
+        <!-- Section 3: I Don't Ask You To Forgive Me -->
+        <section class="section forgive-section" id="section2">
+            <div class="stars"></div>
+            <div class="forgive-content">
+                <h2 class="section-title">I Don't Ask You To Forgive Me</h2>
+                <div class="forgive-text">
+                    <p>You don't have to forgive me because I said sorry.</p>
+                    <p>You don't have to forget anything.</p>
+                    <p>You don't have to come back.</p>
+                    <p>You don't have to give me another chance.</p>
+                    <p class="emphasis">Your feelings are yours.</p>
+                    <p class="emphasis">Your decision is yours.</p>
+                    <p class="gap">I just wanted to finally say what I should have said properly a long time ago:</p>
+                    <p class="sorry-large">I'm sorry.</p>
+                </div>
+                <button class="continue-btn" onclick="showSection(3)">
+                    Continue
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 4: My Prayer For You -->
+        <section class="section prayer-section" id="section3">
+            <div class="stars night-sky"></div>
+            <div class="prayer-content">
+                <h2 class="section-title">One thing I will always pray for</h2>
+                <div class="prayer-text">
+                    <p>I don't ask God to give me everything I want.</p>
+                    <p>If I could ask for one thing, I would ask Him to keep you safe.</p>
+                    <p class="gap">Whatever pain you have suffered,</p>
+                    <p>whatever pain you may face in the future,</p>
+                    <p>I pray that it becomes lighter.</p>
+                    <p class="gap">May God protect you from the things that hurt you.</p>
+                    <p>May He protect your heart.</p>
+                    <p>May He keep your inner child happy.</p>
+                    <p>May He surround you with people who genuinely love you.</p>
+                    <p class="gap">And if life ever becomes difficult for you,</p>
+                    <p>may you always find the strength to get through it.</p>
+                    <p class="final-prayer">You deserve to be happy and protected from the things that try to take that happiness away.</p>
+                </div>
+                <button class="continue-btn" onclick="showSection(4)">
+                    Continue
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 5: Final Letter -->
+        <section class="section letter-section" id="section4">
+            <div class="stars"></div>
+            <div class="letter-content">
+                <div class="letter">
+                    <p class="salutation">Talat,</p>
+                    <p>I don't know where life takes us from here.</p>
+                    <p>Maybe you forgive me.</p>
+                    <p>Maybe you don't.</p>
+                    <p>Maybe someday this becomes just a memory.</p>
+                    <p class="gap">But whatever happens, I genuinely hope you are happy.</p>
+                    <p>I hope the little version of you inside your heart gets everything she deserves.</p>
+                    <p>I hope you laugh more.</p>
+                    <p>I hope you feel safe.</p>
+                    <p>I hope you are loved properly.</p>
+                    <p>I hope life is gentle with you.</p>
+                    <p class="gap">And I'm sorry that there were moments when I wasn't.</p>
+                    <p class="gap">Thank you for every good memory.</p>
+                    <p>I'm sorry for every painful one.</p>
+                    <p class="signature">— Ashish</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Choice Section -->
+        <section class="section choice-section" id="choiceSection">
+            <div class="stars"></div>
+            <div class="choice-content">
+                <div id="choiceQuestion">
+                    <p class="choice-question">Do you forgive me?</p>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="handleChoice('Maybe someday')">Maybe someday</button>
+                        <button class="choice-btn" onclick="handleChoice('I don't know')">I don't know</button>
+                        <button class="choice-btn" onclick="handleChoice('I forgive you')">I forgive you</button>
+                    </div>
+                </div>
+                <div id="choiceResponse" style="display: none;">
+                    <p class="choice-response">Whatever your answer is, thank you for reading this.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let currentSection = 0;
+        let musicPlaying = false;
+        const audio = document.getElementById('audio');
+        const musicToggle = document.getElementById('musicToggle');
+        const choiceSection = document.getElementById('choiceSection');
+        const choiceQuestion = document.getElementById('choiceQuestion');
+        const choiceResponse = document.getElementById('choiceResponse');
+
+        // Music toggle
+        musicToggle.addEventListener('click', function() {
+            if (musicPlaying) {
+                audio.pause();
+                musicToggle.textContent = '🔇';
+            } else {
+                audio.play();
+                musicToggle.textContent = '🔊';
+            }
+            musicPlaying = !musicPlaying;
+        });
+
+        // Show section
+        function showSection(sectionNum) {
+            currentSection = sectionNum;
+            
+            // Hide choice section initially
+            choiceSection.style.display = 'none';
+            
+            // Show the requested section
+            const section = document.getElementById('section' + sectionNum);
+            if (section) {
+                section.classList.add('visible');
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // Show choice section after letter section
+            if (sectionNum >= 4) {
+                setTimeout(() => {
+                    choiceSection.style.display = 'flex';
+                    choiceSection.classList.add('visible');
+                }, 500);
+            }
+        }
+
+        // Handle choice
+        function handleChoice(choice) {
+            choiceQuestion.style.display = 'none';
+            choiceResponse.style.display = 'block';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            choiceSection.style.display = 'none';
+        });
+    </script>
+</body>
 </html>
